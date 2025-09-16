@@ -1,6 +1,12 @@
+import logging
 import asyncio
 import time
-from govee_local_api import GoveeController, GoveeDevice, GoveeLightFeatures
+from govee_local_api import GoveeController, GoveeDevice
+from db_functions import connect, get_count_data
+
+from config import LightsConfig
+
+logger = logging.getLogger(__name__)
 
 def update_device_callback(device: GoveeDevice) -> None:
     # print(f"Goveee device update callback: {device}")
@@ -27,32 +33,53 @@ async def create_controller(discovery_enabled: bool) -> GoveeController:
         while not controller.devices:
             print("Waiting for devices... ")
             await asyncio.sleep(1)
+    else: 
+        logger.info(f"Discovery not enabled. Adding {CONFIG.lamp.hostname} to discovery.")
+        controller.add_device_to_discovery_queue(CONFIG.lamp.hostname)
+        while not controller.devices:
+            logger.info(f"Waiting for device {CONFIG.lamp.hostname} to be discovered...")
+            await asyncio.sleep(1)        
     return controller
 
 async def turn_on(device: GoveeDevice) -> None:
     await device.turn_on()
+    await set_color(device, 255, 255, 255)
+
 
 async def set_color(device: GoveeDevice, r: int, g: int, b: int) -> None:
     await device.set_rgb_color(r, g, b)
-
-async def main():
-    controller: GoveeController = await create_controller(True)
-    print(controller.devices[0])
+    
+async def setup_device():
+    controller: GoveeController = await create_controller(False)
+    global device
     device = controller.devices[0]
+    print(device)
     await turn_on(device)
-    time.sleep(1)    
-    intervall = 3
-    for i in range(10):
-        await set_color(device, 255, 0, 0)
-        time.sleep(intervall)
-        await set_color(device, 255, 255, 0)
-        time.sleep(intervall)
-        await set_color(device, 0, 255, 0)
-        time.sleep(intervall)
-        
-
+    return device
+    
+async def main():
+    connect(CONFIG)
+    device = await setup_device()
+    time.sleep(1) 
+    while True:
+        count = get_count_data(CONFIG.lamp.observation_id)
+        logger.info(f"Current object count {count}")
+        if count > 0 and count < 8:
+            await set_color(device, 0, 255, 0)
+        if count > 8:
+            await set_color(device, 255, 255, 0)
+        if count > 12:
+            await set_color(device, 255, 0, 0)
+        time.sleep(1)
+     
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    global CONFIG
+    CONFIG = LightsConfig()
+    logger.debug(f'Starting light commander. Config: {CONFIG.model_dump_json(indent=2)}')
     try:
         asyncio.run(main())
     except (EOFError, KeyboardInterrupt):
-        print("REPL exited.")
+        logger.info("Shutting down")
+        asyncio.run(device.turn_off())
+        

@@ -1,0 +1,14 @@
+log_level: INFO
+
+db:
+  hostname: localhost
+  port: 5432
+  username: analytics
+  password: analytics
+  database: analytics
+
+lamp:
+  hostname: localhost
+  threshold_yellow: 8
+  threshold_red: 12
+  observation_id: "test"
