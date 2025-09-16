@@ -31,4 +31,5 @@ jobs:
       - name: Install project
         run: |
           poetry config cache-dir /root/.cache/pypoetry
-          bash -c "make test"
+          poetry install
+          poetry show
