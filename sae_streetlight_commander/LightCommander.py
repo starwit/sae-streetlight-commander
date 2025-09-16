@@ -2,9 +2,9 @@ import logging
 import asyncio
 import time
 from govee_local_api import GoveeController, GoveeDevice
-from db_functions import connect, get_count_data
+from .db_functions import connect, get_count_data
 
-from config import LightsConfig
+from .config import LightsConfig
 
 logger = logging.getLogger(__name__)
 
@@ -71,8 +71,8 @@ async def main():
         if count > 12:
             await set_color(device, 255, 0, 0)
         time.sleep(1)
-     
-if __name__ == "__main__":
+
+def run_app():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     global CONFIG
     CONFIG = LightsConfig()
@@ -82,4 +82,7 @@ if __name__ == "__main__":
     except (EOFError, KeyboardInterrupt):
         logger.info("Shutting down")
         asyncio.run(device.turn_off())
+ 
+if __name__ == "__main__":
+    run_app()
         
