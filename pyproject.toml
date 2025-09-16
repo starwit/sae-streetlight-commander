@@ -1,0 +1,18 @@
+[tool.poetry]
+package-mode = false
+name = "sae-streetlight-commander"
+version = "0.0.1"
+description = ""
+license = "AGPLv3"
+readme = "README.md"
+authors = ["ztarbug <markus.zarbock@starwit.de>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+govee-local-api = "^2.2.0"
+prompt-toolkit = "^3.0.52"
+psycopg2 = "^2.9.10"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
