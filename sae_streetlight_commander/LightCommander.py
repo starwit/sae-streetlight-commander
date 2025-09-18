@@ -64,11 +64,11 @@ async def main():
     while True:
         count = get_count_data(CONFIG.lamp.observation_id)
         logger.info(f"Current object count {count}")
-        if count > 0 and count < 8:
+        if count > 0 and count < CONFIG.lamp.threshold_yellow:
             await set_color(device, 0, 255, 0)
-        if count > 8:
+        if count > CONFIG.lamp.threshold_yellow:
             await set_color(device, 255, 255, 0)
-        if count > 12:
+        if count > CONFIG.lamp.threshold_red:
             await set_color(device, 255, 0, 0)
         time.sleep(1)
 
