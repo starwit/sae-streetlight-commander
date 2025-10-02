@@ -67,7 +67,7 @@ async def main():
         if count > 0 and count < CONFIG.lamp.threshold_yellow:
             await set_color(device, 0, 255, 0)
         if count > CONFIG.lamp.threshold_yellow:
-            await set_color(device, 255, 255, 0)
+            await set_color(device, 255, 220, 0)
         if count > CONFIG.lamp.threshold_red:
             await set_color(device, 255, 0, 0)
         time.sleep(1)
