@@ -12,9 +12,9 @@ python = "^3.12"
 govee-local-api = "^2.2.0"
 prompt-toolkit = "^3.0.52"
 psycopg2 = "^2.9.10"
-pydantic-settings = "^2.10.1"
-prometheus-client = "^0.22.1"
-pydantic = "^2.11.9"
+pydantic-settings = "^2.11.0"
+prometheus-client = "^0.23.1"
+pydantic = "^2.11.10"
 visionlib = { git = "https://github.com/starwit/vision-lib.git", subdirectory = "python", tag = "0.11.2" }
 
 [build-system]
